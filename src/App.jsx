@@ -1,28 +1,54 @@
-import { useState } from 'react'
+import { useState } from 'react';
+import LoginScreen from './components/LoginScreen.jsx';
+import Sidebar from './components/Sidebar.jsx';
+import PatientDashboard from './components/PatientDashboard.jsx';
+import BrandFooter from './components/BrandFooter.jsx';
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [user, setUser] = useState(null);
+  const [route, setRoute] = useState('dashboard');
+
+  const handleSignIn = (u) => {
+    setUser({ name: u.name || 'Patient', role: 'patient' });
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    setRoute('dashboard');
+  };
+
+  if (!user) {
+    return <LoginScreen onSignIn={handleSignIn} />;
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">
-          Vibe Coding Platform
-        </h1>
-        <p className="text-gray-600 mb-6">
-          Your AI-powered development environment
-        </p>
-        <div className="text-center">
-          <button
-            onClick={() => setCount(count + 1)}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
-          >
-            Count is {count}
-          </button>
-        </div>
+    <div className="min-h-screen bg-slate-50 text-slate-900">
+      <div className="flex">
+        <Sidebar active={route} onNavigate={setRoute} onLogout={handleLogout} />
+        <main className="min-h-screen flex-1">
+          {route === 'dashboard' && <PatientDashboard name={user.name} />}
+          {route !== 'dashboard' && (
+            <div className="px-6 py-10">
+              <h1 className="text-2xl font-semibold tracking-tight">{labelForRoute(route)}</h1>
+              <p className="mt-2 text-slate-500">This section will be available in the next iteration.</p>
+            </div>
+          )}
+          <BrandFooter />
+        </main>
       </div>
     </div>
-  )
+  );
 }
 
-export default App
+function labelForRoute(route) {
+  switch (route) {
+    case 'records':
+      return 'My Health Records';
+    case 'permissions':
+      return 'Manage Permissions';
+    case 'activity':
+      return 'Activity Log';
+    default:
+      return 'Dashboard';
+  }
+}
