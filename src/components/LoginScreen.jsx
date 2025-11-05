@@ -21,33 +21,33 @@ export default function LoginScreen({ onSignIn }) {
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate auth for the sandbox (no backend yet)
+    setError('');
     setTimeout(() => {
       setLoading(false);
-      onSignIn({ name: userId || 'Patient', role: 'patient' });
+      const id = userId.trim().toLowerCase();
+      const role = id.startsWith('admin') ? 'admin' : id.startsWith('doctor') ? 'doctor' : 'patient';
+      if (!userId || !password) {
+        setError('Please enter both User ID and Password.');
+        return;
+      }
+      onSignIn({ name: userId || 'User', role });
     }, 700);
   };
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-white">
-      {/* Spline Cover */}
       <div className="absolute inset-0">
-        <Spline
-          scene="https://prod.spline.design/2fSS9b44gtYBt4RI/scene.splinecode"
-          style={{ width: '100%', height: '100%' }}
-        />
-        {/* Soft gradient to improve contrast for the form */}
+        <Spline scene="https://prod.spline.design/2fSS9b44gtYBt4RI/scene.splinecode" style={{ width: '100%', height: '100%' }} />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-white/90 via-white/80 to-white/60" />
       </div>
 
-      {/* Centered Card */}
       <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl items-center px-6">
         <div className="mx-auto w-full max-w-md rounded-2xl bg-white/90 p-8 shadow-2xl ring-1 ring-slate-100 backdrop-blur">
-          {/* Logo */}
           <div className="mb-8 flex items-center gap-3">
             <div className="grid h-10 w-10 place-content-center rounded-xl bg-blue-600 text-white shadow-sm">
               <span className="text-lg font-bold">IL</span>
@@ -61,7 +61,7 @@ export default function LoginScreen({ onSignIn }) {
           <form onSubmit={handleSubmit} className="space-y-5">
             <Input label="User ID" value={userId} onChange={(e) => setUserId(e.target.value)} />
             <Input label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-
+            {error && <div className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</div>}
             <button
               type="submit"
               disabled={loading}
@@ -71,9 +71,7 @@ export default function LoginScreen({ onSignIn }) {
             </button>
           </form>
 
-          <p className="mt-6 text-center text-xs text-slate-500">
-            By continuing you agree to our privacy policy.
-          </p>
+          <p className="mt-6 text-center text-xs text-slate-500">Use an ID starting with “doctor” or “admin” to preview those roles.</p>
         </div>
       </div>
     </div>

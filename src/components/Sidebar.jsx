@@ -1,13 +1,25 @@
-import { Home, FileText, Shield, Activity, LogOut } from 'lucide-react';
+import { Home, FileText, Shield, Activity, LogOut, Users, Grid, Building2 } from 'lucide-react';
 
-const navItems = [
-  { key: 'dashboard', label: 'Dashboard', icon: Home },
-  { key: 'records', label: 'My Records', icon: FileText },
-  { key: 'permissions', label: 'Permissions', icon: Shield },
-  { key: 'activity', label: 'Activity Log', icon: Activity },
-];
+const ROLE_NAV = {
+  patient: [
+    { key: '/patient/dashboard', label: 'Dashboard', icon: Home },
+    { key: '/patient/records', label: 'My Records', icon: FileText },
+    { key: '/patient/permissions', label: 'Permissions', icon: Shield },
+    { key: '/patient/activity', label: 'Activity Log', icon: Activity },
+    { key: '/patient/providers', label: 'Providers', icon: Building2 },
+  ],
+  doctor: [
+    { key: '/doctor/patients', label: 'My Patients', icon: Users },
+  ],
+  admin: [
+    { key: '/admin/overview', label: 'Overview', icon: Grid },
+    { key: '/admin/manage-users', label: 'Manage Users', icon: Users },
+    { key: '/admin/manage-providers', label: 'Manage Providers', icon: Building2 },
+  ],
+};
 
-export default function Sidebar({ active, onNavigate, onLogout }) {
+export default function Sidebar({ role = 'patient', active, onNavigate, onLogout }) {
+  const items = ROLE_NAV[role] || ROLE_NAV.patient;
   return (
     <aside className="flex h-screen w-64 flex-col border-r border-slate-200 bg-white/80 backdrop-blur">
       <div className="flex items-center gap-2 px-5 py-5">
@@ -15,7 +27,7 @@ export default function Sidebar({ active, onNavigate, onLogout }) {
         <div className="text-base font-semibold tracking-tight text-slate-900">IoMT‑Ledger</div>
       </div>
       <nav className="mt-2 flex-1 space-y-1 px-3">
-        {navItems.map(({ key, label, icon: Icon }) => (
+        {items.map(({ key, label, icon: Icon }) => (
           <button
             key={key}
             onClick={() => onNavigate(key)}
